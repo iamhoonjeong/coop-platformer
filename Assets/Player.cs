@@ -30,6 +30,6 @@ public class Player : MonoBehaviour
 
     void HandleAnimations()
     {
-        anim.SetBool("isRunning", rb.linearVelocityX != 0);
+        anim.SetFloat("xVelocity", rb.linearVelocityX);
     }
 }
