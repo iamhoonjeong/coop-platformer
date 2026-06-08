@@ -5,7 +5,8 @@ AssetOrigin:
   productId: 155360
   packageName: Pixel Adventure 1
   packageVersion: 1.0
-  assetPath: Assets/Graphics/Items/Checkpoints/Start/Start (Moving) (64x64).png
+  assetPath: Assets/Pixel Adventure 1/Assets/Items/Checkpoints/Start/Start (Moving)
+    (64x64).png
   uploadId: 332803
 TextureImporter:
   internalIDToNameTable:

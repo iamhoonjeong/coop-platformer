@@ -5,7 +5,7 @@ AssetOrigin:
   productId: 155360
   packageName: Pixel Adventure 1
   packageVersion: 1.0
-  assetPath: Assets/Graphics/Terrain/Terrain Sliced (16x16).png
+  assetPath: Assets/Pixel Adventure 1/Assets/Terrain/Terrain Sliced (16x16).png
   uploadId: 332803
 TextureImporter:
   internalIDToNameTable:
