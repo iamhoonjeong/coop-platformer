@@ -1,11 +1,14 @@
 using System;
+using NUnit.Framework;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [Header("Movement")]
+    [Header("Movement details")]
     [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpForce;
+    [SerializeField] float doubleJumpForce;
+    bool canDoubleJump;
 
     [Header("Collision info")]
     [SerializeField] private float groundCheckDistance;
@@ -13,8 +16,12 @@ public class Player : MonoBehaviour
 
     Rigidbody2D rb;
     Animator anim;
-    float xInput;
+
     bool isGrounded;
+    bool isAirborne;
+    float xInput;
+    bool facingRight = true;
+    int facingDir = 1;
 
     void Awake()
     {
@@ -24,41 +31,90 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+
         HandleCollision();
         HandleInput();
         HandleMovement();
+        UpdateAirborneStatus();
+        HandleFlip();
         HandleAnimations();
+    }
+
+    void UpdateAirborneStatus()
+    {
+        if (isGrounded && isAirborne)
+        {
+            HandleLanding();
+        }
+
+        if (!isGrounded && !isAirborne)
+        {
+            BecomeAirborne();
+        }
+    }
+
+    void BecomeAirborne()
+    {
+        isAirborne = true;
+    }
+
+    void HandleLanding()
+    {
+        isAirborne = false;
+        canDoubleJump = true;
     }
 
     void HandleInput()
     {
         xInput = Input.GetAxisRaw("Horizontal");
 
-        if (Input.GetKey(KeyCode.Space) && isGrounded) { Jump(); }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            JumpButton();
+        }
     }
 
-    void Jump()
+    void JumpButton()
     {
-        rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
+        if (isGrounded)
+        {
+            Jump();
+        }
+        else if (canDoubleJump)
+        {
+            DoubleJump();
+        }
     }
 
-    void HandleMovement()
+    void Jump() => rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
+    void DoubleJump()
     {
-        rb.linearVelocity = new Vector2(xInput * moveSpeed, rb.linearVelocityY);
+        canDoubleJump = false;
+        rb.linearVelocity = new Vector2(rb.linearVelocityX, doubleJumpForce);
     }
+
+    void HandleMovement() => rb.linearVelocity = new Vector2(xInput * moveSpeed, rb.linearVelocityY);
 
     void HandleAnimations()
     {
         anim.SetFloat("xVelocity", rb.linearVelocityX);
+        anim.SetFloat("yVelocity", rb.linearVelocityY);
+        anim.SetBool("isGrounded", isGrounded);
     }
 
-    void HandleCollision()
+    void HandleCollision() => isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
+
+    void HandleFlip()
     {
-        isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
+        if (rb.linearVelocityX < 0 && facingRight || rb.linearVelocityX > 0 && !facingRight) Flip();
     }
 
-    void OnDrawGizmos()
+    void Flip()
     {
-        Gizmos.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - groundCheckDistance));
+        facingDir = facingDir * -1;
+        transform.Rotate(0, 180, 0);
+        facingRight = !facingRight;
     }
+
+    void OnDrawGizmos() => Gizmos.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - groundCheckDistance));
 }
