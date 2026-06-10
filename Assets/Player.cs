@@ -10,10 +10,21 @@ public class Player : MonoBehaviour
     [SerializeField] float doubleJumpForce;
     bool canDoubleJump;
 
+    [Header("Buffer & Coyote jump")]
+    [SerializeField] float bufferJumpWindow = 0.25f;
+    float bufferJumpActivated = -1;
+    [SerializeField] float coyoteJumpWindow = 0.5f;
+    float coyoteJumpActicated = -1;
+
     [Header("Wall interactions")]
     [SerializeField] float wallJumpDuration = 0.6f;
     [SerializeField] Vector2 wallJumpForce;
     bool isWallJumping;
+
+    [Header("Knockback")]
+    [SerializeField] float knockbackDuration = 1f;
+    [SerializeField] Vector2 knockbackPower;
+    bool isKnocked;
 
     [Header("Collision")]
     [SerializeField] private float groundCheckDistance;
@@ -41,6 +52,8 @@ public class Player : MonoBehaviour
     {
         UpdateAirborneStatus();
 
+        if (isKnocked) return;
+
         HandleInput();
         HandleWallSlide();
         HandleMovement();
@@ -49,14 +62,22 @@ public class Player : MonoBehaviour
         HandleAnimations();
     }
 
-    private void HandleWallSlide()
+    public void Knockback()
     {
-        bool canWallSlide = isWallDetected && rb.linearVelocityY < 0;
-        float yModifier = yInput < 0 ? 1f : 0.05f;
+        if (isKnocked) return;
 
-        if (!canWallSlide) return;
+        StartCoroutine(KnockbackRoutine());
+        anim.SetTrigger("knockback");
+        rb.linearVelocity = new Vector2(knockbackPower.x * -facingDir, knockbackPower.y);
+    }
 
-        rb.linearVelocity = new Vector2(rb.linearVelocityX, rb.linearVelocityY * yModifier);
+    IEnumerator KnockbackRoutine()
+    {
+        isKnocked = true;
+
+        yield return new WaitForSeconds(knockbackDuration);
+
+        isKnocked = false;
     }
 
     void UpdateAirborneStatus()
@@ -68,26 +89,80 @@ public class Player : MonoBehaviour
     void BecomeAirborne()
     {
         isAirborne = true;
+
+        if (rb.linearVelocity.y < 0)
+        {
+            ActivateCoyoteJump();
+        }
     }
 
     void HandleLanding()
     {
         isAirborne = false;
         canDoubleJump = true;
+
+        AttemptBufferJump();
     }
 
     void HandleInput()
     {
         xInput = Input.GetAxisRaw("Horizontal");
         yInput = Input.GetAxisRaw("Vertical");
-        if (Input.GetKeyDown(KeyCode.Space)) JumpButton();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            JumpButton();
+            RequestBufferJump();
+        }
+
     }
+
+    #region Buffer & Coyote Jump
+    void RequestBufferJump()
+    {
+        if (isAirborne)
+        {
+            bufferJumpActivated = Time.time;
+        }
+    }
+
+    void AttemptBufferJump()
+    {
+        if (Time.time < bufferJumpActivated + bufferJumpWindow)
+        {
+            bufferJumpActivated = Time.time - 1;
+            Jump();
+        }
+    }
+
+    void ActivateCoyoteJump()
+    {
+        coyoteJumpActicated = Time.time;
+    }
+
+    void CancelCoyoteJump()
+    {
+        coyoteJumpActicated = Time.time - 1;
+    }
+    #endregion
 
     void JumpButton()
     {
-        if (isGrounded) { Jump(); }
-        else if (isWallDetected && !isGrounded) { WallJump(); }
-        else if (canDoubleJump) DoubleJump();
+        bool coyoteJumpAvailable = Time.time < coyoteJumpActicated + coyoteJumpWindow;
+
+        if (isGrounded || coyoteJumpAvailable)
+        {
+            Jump();
+        }
+        else if (isWallDetected && !isGrounded)
+        {
+            WallJump();
+        }
+        else if (canDoubleJump)
+        {
+            DoubleJump();
+        }
+
+        CancelCoyoteJump();
     }
 
     void Jump()
@@ -118,6 +193,16 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(wallJumpDuration);
 
         isWallJumping = false;
+    }
+
+    private void HandleWallSlide()
+    {
+        bool canWallSlide = isWallDetected && rb.linearVelocityY < 0;
+        float yModifier = yInput < 0 ? 1f : 0.05f;
+
+        if (!canWallSlide) return;
+
+        rb.linearVelocity = new Vector2(rb.linearVelocityX, rb.linearVelocityY * yModifier);
     }
 
     void HandleMovement()
