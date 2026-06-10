@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // check availability
     bool canBeControlled = false;
 
     [Header("Movement")]
