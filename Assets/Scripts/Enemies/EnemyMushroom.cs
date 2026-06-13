@@ -2,14 +2,12 @@ using UnityEngine;
 
 public class EnemyMushroom : Enemy
 {
-
     protected override void Update()
     {
         base.Update();
+        if (isDead) return;
 
-        anim.SetFloat("xVelocity", rb.linearVelocityX);
         HandleMovement();
-        HandleCollision();
 
         if (isGrounded) HandleTurnAround();
     }
@@ -27,6 +25,6 @@ public class EnemyMushroom : Enemy
     void HandleMovement()
     {
         if (idleTimer > 0) return;
-        if (isGroundInfrontDetected) rb.linearVelocity = new Vector2(moveSpeed * facingDir, rb.linearVelocityY);
+        rb.linearVelocity = new Vector2(moveSpeed * facingDir, rb.linearVelocityY);
     }
 }

@@ -139,7 +139,7 @@ GameObject:
   - component: {fileID: 7573789084876034605}
   - component: {fileID: 2872459998600946380}
   - component: {fileID: 7856005197942112685}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -160,6 +160,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 321684018136816610}
+  - {fileID: 360095033277050131}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &7573789084876034605
@@ -245,11 +246,47 @@ MonoBehaviour:
   coyoteJumpWindow: 0.5
   wallJumpDuration: 0.6
   wallJumpForce: {x: 7, y: 14}
-  knockbackDuration: 0.7
+  knockbackDuration: 0.6
   knockbackPower: {x: 5, y: 7}
   groundCheckDistance: 0.8
   wallCheckDistance: 0.65
   whatIsGround:
     serializedVersion: 2
     m_Bits: 8
+  enemyCheck: {fileID: 360095033277050131}
+  enemyCheckRadius: 0.5
+  whatIsEnemy:
+    serializedVersion: 2
+    m_Bits: 64
   deathVFX: {fileID: 7049579486391395795, guid: 8a2bb920656464b37afe1e8f306f6c4e, type: 3}
+--- !u!1 &7091814851952428276
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 360095033277050131}
+  m_Layer: 7
+  m_Name: EnemyCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &360095033277050131
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7091814851952428276}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.77, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5196314557552649186}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
