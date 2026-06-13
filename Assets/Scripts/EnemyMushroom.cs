@@ -2,15 +2,6 @@ using UnityEngine;
 
 public class EnemyMushroom : Enemy
 {
-    BoxCollider2D cd;
-
-    protected override void Awake()
-    {
-        base.Awake();
-
-        cd = GetComponent<BoxCollider2D>();
-    }
-
     protected override void Update()
     {
         base.Update();
@@ -38,13 +29,6 @@ public class EnemyMushroom : Enemy
     void HandleMovement()
     {
         if (idleTimer > 0) return;
-        if (isGroundInfrontDetected) rb.linearVelocity = new Vector2(moveSpeed * facingDir, rb.linearVelocityY);
-    }
-
-    public override void Die()
-    {
-        base.Die();
-
-        cd.enabled = false;
+        rb.linearVelocity = new Vector2(moveSpeed * facingDir, rb.linearVelocityY);
     }
 }

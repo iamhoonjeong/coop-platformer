@@ -5,12 +5,16 @@ public class Enemy : MonoBehaviour
 {
     protected Animator anim;
     protected Rigidbody2D rb;
+    protected Collider2D col;
 
+    [SerializeField] protected Transform player;
     [SerializeField] protected GameObject damageTrigger;
-    [Space]
+
+    [Header("General info")]
     [SerializeField] protected float moveSpeed = 2f;
     [SerializeField] protected float idleDuration = 1.5f;
     protected float idleTimer;
+    protected bool canMove;
 
     [Header("Death deatils")]
     [SerializeField] float deathImpactSpeed = 5f;
@@ -22,6 +26,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] protected float groundCheckDistance = 1.1f;
     [SerializeField] protected float wallCheckDistance = 0.7f;
     [SerializeField] protected LayerMask whatIsGround;
+    [SerializeField] protected LayerMask whatIsPlayer;
     [SerializeField] protected Transform groundCheck;
     protected bool isGrounded;
     protected bool isWallDetected;
@@ -34,6 +39,19 @@ public class Enemy : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        col = GetComponent<Collider2D>();
+    }
+
+    protected virtual void Start()
+    {
+        InvokeRepeating(nameof(UpdatePlayersRef), 0, 1);
+    }
+
+
+    void UpdatePlayersRef()
+    {
+        if (!player)
+            player = GameManager.instance.player.transform;
     }
 
     protected virtual void Update()
@@ -45,6 +63,7 @@ public class Enemy : MonoBehaviour
 
     public virtual void Die()
     {
+        col.enabled = false;
         damageTrigger.SetActive(false);
         anim.SetTrigger("hit");
         rb.linearVelocity = new Vector2(rb.linearVelocityX, deathImpactSpeed);
@@ -70,7 +89,7 @@ public class Enemy : MonoBehaviour
 
     protected virtual void HandleFlip(float xValue)
     {
-        if (xValue < 0 && facingRight || xValue > 0 && !facingRight) Flip();
+        if (xValue < transform.position.x && facingRight || xValue > transform.position.x && !facingRight) Flip();
     }
 
     protected virtual void Flip()
@@ -80,7 +99,7 @@ public class Enemy : MonoBehaviour
         facingRight = !facingRight;
     }
 
-    void OnDrawGizmos()
+    protected virtual void OnDrawGizmos()
     {
         Gizmos.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - groundCheckDistance));
         Gizmos.DrawLine(groundCheck.position, new Vector2(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
