@@ -3,31 +3,32 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    SpriteRenderer sr => GetComponent<SpriteRenderer>();
+    protected Transform player;
     protected Animator anim;
     protected Rigidbody2D rb;
-    protected Collider2D col;
-
-    [SerializeField] protected Transform player;
-    [SerializeField] protected GameObject damageTrigger;
+    protected Collider2D[] colliders;
 
     [Header("General info")]
     [SerializeField] protected float moveSpeed = 2f;
     [SerializeField] protected float idleDuration = 1.5f;
     protected float idleTimer;
-    protected bool canMove;
+    protected bool canMove = true;
 
     [Header("Death deatils")]
-    [SerializeField] float deathImpactSpeed = 5f;
-    [SerializeField] float deathRotationSpeed = 150f;
-    int deathRotationDirection = 1;
+    [SerializeField] protected float deathImpactSpeed = 5f;
+    [SerializeField] protected float deathRotationSpeed = 150f;
+    protected int deathRotationDirection = 1;
     protected bool isDead;
 
     [Header("Basic collision")]
     [SerializeField] protected float groundCheckDistance = 1.1f;
     [SerializeField] protected float wallCheckDistance = 0.7f;
     [SerializeField] protected LayerMask whatIsGround;
+    [SerializeField] protected float playerDetectionDistance = 15f;
     [SerializeField] protected LayerMask whatIsPlayer;
     [SerializeField] protected Transform groundCheck;
+    protected bool isPlayerDetected;
     protected bool isGrounded;
     protected bool isWallDetected;
     protected bool isGroundInfrontDetected;
@@ -39,12 +40,17 @@ public class Enemy : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        col = GetComponent<Collider2D>();
+        colliders = GetComponentsInChildren<Collider2D>();
     }
 
     protected virtual void Start()
     {
         InvokeRepeating(nameof(UpdatePlayersRef), 0, 1);
+        if (sr.flipX == true && !facingRight)
+        {
+            sr.flipX = false;
+            Flip();
+        }
     }
 
 
@@ -56,6 +62,9 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Update()
     {
+        HandleAnimator();
+        HandleCollision();
+
         idleTimer -= Time.deltaTime;
 
         if (isDead) HandleDeathRotation();
@@ -63,8 +72,10 @@ public class Enemy : MonoBehaviour
 
     public virtual void Die()
     {
-        col.enabled = false;
-        damageTrigger.SetActive(false);
+        foreach (var collider in colliders)
+        {
+            collider.enabled = false;
+        }
         anim.SetTrigger("hit");
         rb.linearVelocity = new Vector2(rb.linearVelocityX, deathImpactSpeed);
         isDead = true;
@@ -73,6 +84,8 @@ public class Enemy : MonoBehaviour
         {
             deathRotationDirection *= -1;
         }
+
+        Destroy(gameObject, 10);
     }
 
     void HandleDeathRotation()
@@ -85,6 +98,7 @@ public class Enemy : MonoBehaviour
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
         isGroundInfrontDetected = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, whatIsGround);
         isWallDetected = Physics2D.Raycast(transform.position, Vector2.right * facingDir, wallCheckDistance, whatIsGround);
+        isPlayerDetected = Physics2D.Raycast(transform.position, Vector2.right * facingDir, playerDetectionDistance, whatIsPlayer);
     }
 
     protected virtual void HandleFlip(float xValue)
@@ -99,10 +113,22 @@ public class Enemy : MonoBehaviour
         facingRight = !facingRight;
     }
 
+    [ContextMenu("Change Facing Direction")]
+    public void FlipDefaultFacingDirection()
+    {
+        sr.flipX = !sr.flipX;
+    }
+
+    protected virtual void HandleAnimator()
+    {
+        anim.SetFloat("xVelocity", rb.linearVelocityX);
+    }
+
     protected virtual void OnDrawGizmos()
     {
         Gizmos.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - groundCheckDistance));
         Gizmos.DrawLine(groundCheck.position, new Vector2(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
         Gizmos.DrawLine(transform.position, new Vector2(transform.position.x + (wallCheckDistance * facingDir), transform.position.y));
+        Gizmos.DrawLine(transform.position, new Vector2(transform.position.x + (playerDetectionDistance * facingDir), transform.position.y));
     }
 }

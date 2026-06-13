@@ -5,8 +5,17 @@ public class DeadZone : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         Player player = collision.gameObject.GetComponent<Player>();
-        player?.Die();
+        if (player)
+        {
+            player.Die();
+            GameManager.instance.RespawnPlayer();
+        }
 
-        GameManager.instance.RespawnPlayer();
+
+        Enemy enemy = collision.gameObject.GetComponent<Enemy>();
+        if (enemy)
+        {
+            enemy.Die();
+        }
     }
 }
