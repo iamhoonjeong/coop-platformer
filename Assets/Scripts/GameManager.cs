@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -78,6 +79,9 @@ public class GameManager : MonoBehaviour
 
     public void RespawnPlayer()
     {
+        DifficultyManager difficultyManager = DifficultyManager.instance;
+        if (difficultyManager && difficultyManager.difficulty == DifficultyType.Hard) return;
+
         StartCoroutine(RespawnCoroutine());
     }
 
@@ -94,6 +98,14 @@ public class GameManager : MonoBehaviour
         fruitsCollected++;
         inGameUI.UpdateFruitUI(fruitsCollected, totalFruits);
     }
+
+    public void RemoveFruit()
+    {
+        fruitsCollected--;
+        inGameUI.UpdateFruitUI(fruitsCollected, totalFruits);
+    }
+
+    public int FruitsCollected() => fruitsCollected;
 
     public bool FruitsHaveRandomLoom()
     {
@@ -148,6 +160,13 @@ public class GameManager : MonoBehaviour
         if (!NoMoreLevels())
             PlayerPrefs.SetInt("ContinueLevelNumber", nextLevelIndex);
     }
+
+    public void RestartLevel()
+    {
+        UIInGame.instance.fadeEffect.ScreenFade(1, 0.75f, LoadCurrentScene);
+    }
+
+    private void LoadCurrentScene() => SceneManager.LoadScene("Level_" + currentLevelIndex);
 
     void LoadTheEndScene() => SceneManager.LoadScene("TheEnd");
 

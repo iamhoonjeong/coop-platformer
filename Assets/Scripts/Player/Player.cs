@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+
+    DifficultyType gameDifficulty;
+    GameManager gameManager;
     bool canBeControlled = false;
+
+    Rigidbody2D rb;
+    Animator anim;
+    CapsuleCollider2D cd;
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed;
@@ -43,10 +50,6 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject deathVFX;
     [SerializeField] int skinId;
 
-    Rigidbody2D rb;
-    Animator anim;
-    CapsuleCollider2D cd;
-
     bool isGrounded;
     bool isAirborne;
     bool isWallDetected;
@@ -66,8 +69,41 @@ public class Player : MonoBehaviour
     void Start()
     {
         defaultGravityScale = rb.gravityScale;
+        gameManager = GameManager.instance;
+
+        UpdateGameDifficulty();
         RespawnFinished(false);
         UpdateSkin();
+    }
+
+    public void Damage()
+    {
+        if (gameDifficulty == DifficultyType.Normal)
+        {
+            if (gameManager.FruitsCollected() <= 0)
+            {
+                Die();
+                gameManager.RestartLevel();
+            }
+            else
+            {
+                gameManager.RemoveFruit();
+            }
+            return;
+        }
+
+        if (gameDifficulty == DifficultyType.Hard)
+        {
+            Die();
+            gameManager.RestartLevel();
+        }
+    }
+
+    private void UpdateGameDifficulty()
+    {
+        DifficultyManager difficultyManager = DifficultyManager.instance;
+
+        if (difficultyManager) gameDifficulty = difficultyManager.difficulty;
     }
 
     void Update()

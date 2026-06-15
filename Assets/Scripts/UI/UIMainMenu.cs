@@ -47,7 +47,11 @@ public class UIMainMenu : MonoBehaviour
 
     public void ContinueGame()
     {
+        int difficultyIndex = PlayerPrefs.GetInt("GameDifficulty", 1);
         int levelToLoad = PlayerPrefs.GetInt("ContinueLevelNumber", 0);
+
+        DifficultyManager.instance.LoadDifficulty(difficultyIndex);
+
         SceneManager.LoadScene("Level_" + levelToLoad);
     }
 }

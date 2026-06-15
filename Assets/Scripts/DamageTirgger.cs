@@ -5,6 +5,10 @@ public class DamageTirgger : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         Player player = collision.gameObject.GetComponent<Player>();
-        player?.Knockback(transform.position.x);
+        if (player)
+        {
+            player.Damage();
+            player.Knockback(transform.position.x);
+        }
     }
 }
