@@ -56,8 +56,7 @@ public class Enemy : MonoBehaviour
 
     void UpdatePlayersRef()
     {
-        if (!player)
-            player = GameManager.instance.player.transform;
+        if (!player) player = GameManager.instance.player.transform;
     }
 
     protected virtual void Update()

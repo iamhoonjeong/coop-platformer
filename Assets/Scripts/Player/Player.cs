@@ -38,8 +38,10 @@ public class Player : MonoBehaviour
     [SerializeField] float enemyCheckRadius;
     [SerializeField] LayerMask whatIsEnemy;
 
-    [Header("VFX")]
+    [Header("Player Visuals")]
+    [SerializeField] AnimatorOverrideController[] animators;
     [SerializeField] GameObject deathVFX;
+    [SerializeField] int skinId;
 
     Rigidbody2D rb;
     Animator anim;
@@ -65,6 +67,7 @@ public class Player : MonoBehaviour
     {
         defaultGravityScale = rb.gravityScale;
         RespawnFinished(false);
+        UpdateSkin();
     }
 
     void Update()
@@ -87,6 +90,15 @@ public class Player : MonoBehaviour
         HandleFlip();
         HandleCollision();
         HandleAnimations();
+    }
+
+    public void UpdateSkin()
+    {
+        SkinManager skinManager = SkinManager.instance;
+
+        if (!skinManager) return;
+
+        anim.runtimeAnimatorController = animators[skinManager.choosenSkinId];
     }
 
     void HandleEnemyDetection()
