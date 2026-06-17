@@ -15,9 +15,6 @@ public class Checkpoint : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (active && !canBeReactivated) return;
-
-
-
         Player player = collision.GetComponent<Player>();
 
         if (player)
