@@ -33,12 +33,15 @@ public class UIMainMenu : MonoBehaviour
             ui.SetActive(false);
         }
 
+        AudioManager.instance.PlaySFX(4);
+
         uiToEnable.SetActive(true);
     }
 
     public void NewGame()
     {
         fadeEffect.ScreenFade(1, 1.5f, LoadLevelScene);
+        AudioManager.instance.PlaySFX(4);
     }
 
     void LoadLevelScene()
@@ -63,6 +66,7 @@ public class UIMainMenu : MonoBehaviour
         DifficultyManager.instance.LoadDifficulty(difficultyIndex);
 
         SceneManager.LoadScene("Level_" + levelToLoad);
+        AudioManager.instance.PlaySFX(4);
     }
 
     public void MoveCameraToMainMenu()
