@@ -7,11 +7,14 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject fruitDrop;
     [SerializeField] DifficultyType gameDifficulty;
     GameManager gameManager;
-    bool canBeControlled = false;
 
     Rigidbody2D rb;
     Animator anim;
     CapsuleCollider2D cd;
+    bool canBeControlled = false;
+
+    public PlayerInput playerInput { get; private set; }
+    Vector2 moveInput;
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed;
@@ -54,8 +57,7 @@ public class Player : MonoBehaviour
     bool isGrounded;
     bool isAirborne;
     bool isWallDetected;
-    float xInput;
-    float yInput;
+
     bool facingRight = true;
     int facingDir = 1;
 
@@ -65,6 +67,24 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         cd = GetComponent<CapsuleCollider2D>();
         anim = GetComponentInChildren<Animator>();
+
+        playerInput = new PlayerInput();
+    }
+
+    void OnEnable()
+    {
+        playerInput.Enable();
+        playerInput.Player.Jump.performed += ctx => JumpButton();
+        playerInput.Player.Movement.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        playerInput.Player.Movement.canceled += ctx => moveInput = Vector2.zero;
+    }
+
+    void OnDisable()
+    {
+        playerInput.Disable();
+        playerInput.Player.Jump.performed -= ctx => JumpButton();
+        playerInput.Player.Movement.performed -= ctx => moveInput = ctx.ReadValue<Vector2>();
+        playerInput.Player.Movement.canceled -= ctx => moveInput = Vector2.zero;
     }
 
     void Start()
@@ -75,6 +95,28 @@ public class Player : MonoBehaviour
         UpdateGameDifficulty();
         RespawnFinished(false);
         UpdateSkin();
+    }
+
+    void Update()
+    {
+        UpdateAirborneStatus();
+
+        if (!canBeControlled)
+        {
+            HandleCollision();
+            HandleAnimations();
+            return;
+        }
+
+        if (isKnocked) return;
+
+        HandleEnemyDetection();
+        // HandleInput();
+        HandleWallSlide();
+        HandleMovement();
+        HandleFlip();
+        HandleCollision();
+        HandleAnimations();
     }
 
     public void Damage()
@@ -106,28 +148,6 @@ public class Player : MonoBehaviour
         DifficultyManager difficultyManager = DifficultyManager.instance;
 
         if (difficultyManager) gameDifficulty = difficultyManager.difficulty;
-    }
-
-    void Update()
-    {
-        UpdateAirborneStatus();
-
-        if (!canBeControlled)
-        {
-            HandleCollision();
-            HandleAnimations();
-            return;
-        }
-
-        if (isKnocked) return;
-
-        HandleEnemyDetection();
-        HandleInput();
-        HandleWallSlide();
-        HandleMovement();
-        HandleFlip();
-        HandleCollision();
-        HandleAnimations();
     }
 
     public void UpdateSkin()
@@ -259,14 +279,13 @@ public class Player : MonoBehaviour
 
     void HandleInput()
     {
-        xInput = Input.GetAxisRaw("Horizontal");
-        yInput = Input.GetAxisRaw("Vertical");
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            JumpButton();
-            RequestBufferJump();
-        }
-
+        // xInput = Input.GetAxisRaw("Horizontal");
+        // yInput = Input.GetAxisRaw("Vertical");
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     JumpButton();
+        //     RequestBufferJump();
+        // }
     }
 
     #region Buffer & Coyote Jump
@@ -357,7 +376,7 @@ public class Player : MonoBehaviour
     private void HandleWallSlide()
     {
         bool canWallSlide = isWallDetected && rb.linearVelocityY < 0;
-        float yModifier = yInput < 0 ? 1f : 0.05f;
+        float yModifier = moveInput.y < 0 ? 1f : 0.05f;
 
         if (!canWallSlide) return;
 
@@ -368,7 +387,7 @@ public class Player : MonoBehaviour
     {
         if (isWallDetected) return;
         if (isWallJumping) return;
-        rb.linearVelocity = new Vector2(xInput * moveSpeed, rb.linearVelocityY);
+        rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocityY);
     }
 
     void HandleAnimations()
@@ -387,7 +406,7 @@ public class Player : MonoBehaviour
 
     void HandleFlip()
     {
-        if (xInput < 0 && facingRight || xInput > 0 && !facingRight) Flip();
+        if (moveInput.x < 0 && facingRight || moveInput.x > 0 && !facingRight) Flip();
     }
 
     void Flip()
