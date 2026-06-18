@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class EnemyRhino : Enemy
@@ -8,17 +9,30 @@ public class EnemyRhino : Enemy
     [SerializeField] float defaultSpeed;
     [SerializeField] Vector2 impactPower;
 
+    [Header("Effects")]
+    [SerializeField] ParticleSystem dustFx;
+    [SerializeField] Vector2 cameraImpulseDir;
+    CinemachineImpulseSource impulseSource;
+
     protected override void Start()
     {
         base.Start();
 
         canMove = false;
         defaultSpeed = moveSpeed;
+        impulseSource = GetComponent<CinemachineImpulseSource>();
     }
     protected override void Update()
     {
         base.Update();
         HandleCharge();
+    }
+
+    void HitWallImpact()
+    {
+        dustFx.Play();
+        impulseSource.DefaultVelocity = new Vector2(cameraImpulseDir.x * facingDir, cameraImpulseDir.y);
+        impulseSource.GenerateImpulse();
     }
 
     void HandleCharge()
@@ -51,6 +65,7 @@ public class EnemyRhino : Enemy
 
     void WallHit()
     {
+        HitWallImpact();
         canMove = false;
         SpeedReset();
         anim.SetBool("hitWall", true);

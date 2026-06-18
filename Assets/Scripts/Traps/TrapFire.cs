@@ -20,7 +20,7 @@ public class TrapFire : MonoBehaviour
 
     void Start()
     {
-        if (!fireButton)
+        if (fireButton == null)
         {
             print("you don't have fire button " + gameObject.name + "!");
         }
