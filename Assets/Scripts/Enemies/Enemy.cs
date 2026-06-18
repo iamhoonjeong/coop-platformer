@@ -45,18 +45,19 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Start()
     {
-        InvokeRepeating(nameof(UpdatePlayersRef), 0, 1);
         if (sr.flipX == true && !facingRight)
         {
             sr.flipX = false;
             Flip();
         }
+
+        PlayerManager.OnPlayerRespawn += UpdatePlayersRef;
     }
 
 
     void UpdatePlayersRef()
     {
-        if (!player) player = GameManager.instance.player.transform;
+        if (player == null) player = PlayerManager.instance.player.transform;
     }
 
     protected virtual void Update()
@@ -84,6 +85,7 @@ public class Enemy : MonoBehaviour
             deathRotationDirection *= -1;
         }
 
+        PlayerManager.OnPlayerRespawn -= UpdatePlayersRef;
         Destroy(gameObject, 10);
     }
 

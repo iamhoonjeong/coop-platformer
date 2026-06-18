@@ -14,26 +14,21 @@ public class GameManager : MonoBehaviour
     [SerializeField] int currentLevelIndex;
     int nextLevelIndex;
 
-    [Header("Player")]
-    [SerializeField] GameObject playerPrefab;
-    [SerializeField] Transform respawnPoint;
-    [SerializeField] float respawnDelay;
-
-    public Player player;
-
     [Header("Fruits Management")]
     public bool fruitsAreRandom;
     public int fruitsCollected;
     public int totalFruits;
+    public Transform fruitParent;
 
     [Header("Checkpoints")]
     public bool canReactivate;
 
-    [Header("Traps")]
-    public GameObject arrowPrefab;
-
     [Header("Managers")]
     [SerializeField] AudioManager audioManager;
+    [SerializeField] PlayerManager playerManager;
+    [SerializeField] SkinManager skinManager;
+    [SerializeField] DifficultyManager difficultyManager;
+    [SerializeField] ObjectCreator objectCreator;
 
     void Awake()
     {
@@ -53,14 +48,7 @@ public class GameManager : MonoBehaviour
         inGameUI = UIInGame.instance;
 
         currentLevelIndex = SceneManager.GetActiveScene().buildIndex;
-        if (respawnPoint == null)
-        {
-            respawnPoint = FindFirstObjectByType<StartPoint>().transform;
-        }
-        if (player == null)
-        {
-            player = FindFirstObjectByType<Player>();
-        }
+
 
         nextLevelIndex = currentLevelIndex + 1;
         CollectFruitsInfo();
@@ -76,10 +64,11 @@ public class GameManager : MonoBehaviour
 
     void CreateManagersIfNeeded()
     {
-        if (AudioManager.instance == null)
-        {
-            Instantiate(audioManager);
-        }
+        if (AudioManager.instance == null) Instantiate(audioManager);
+        if (PlayerManager.instance == null) Instantiate(playerManager);
+        if (SkinManager.instance == null) Instantiate(skinManager);
+        if (DifficultyManager.instance == null) Instantiate(difficultyManager);
+        if (ObjectCreator.instance == null) Instantiate(objectCreator);
     }
 
     private void CollectFruitsInfo()
@@ -92,26 +81,21 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("Level" + currentLevelIndex + "TotalFruits", totalFruits);
     }
 
-    public void UpdateRespawnPosition(Transform newRespawnPoint)
+
+    [ContextMenu("Parent All Fruits")]
+    private void ParentAllTheFruits()
     {
-        respawnPoint = newRespawnPoint;
+        if (fruitParent == null) return;
+
+        Fruit[] allFruits = FindObjectsByType<Fruit>(FindObjectsSortMode.None);
+
+        foreach (Fruit fruit in allFruits)
+        {
+            fruit.transform.parent = fruitParent;
+        }
     }
 
-    public void RespawnPlayer()
-    {
-        DifficultyManager difficultyManager = DifficultyManager.instance;
-        if (difficultyManager && difficultyManager.difficulty == DifficultyType.Hard) return;
 
-        StartCoroutine(RespawnCoroutine());
-    }
-
-    IEnumerator RespawnCoroutine()
-    {
-        yield return new WaitForSeconds(respawnDelay);
-
-        GameObject newPlayer = Instantiate(playerPrefab, respawnPoint.position, Quaternion.identity);
-        player = newPlayer.GetComponent<Player>();
-    }
 
     public void AddFruit()
     {
@@ -130,20 +114,6 @@ public class GameManager : MonoBehaviour
     public bool FruitsHaveRandomLoom()
     {
         return fruitsAreRandom;
-    }
-
-    public void CreateObject(GameObject prefab, Transform target, float delay = 0)
-    {
-        StartCoroutine(CreateObjectCoroutine(prefab, target, delay));
-    }
-
-    IEnumerator CreateObjectCoroutine(GameObject prefab, Transform target, float delay)
-    {
-        Vector3 newPosition = target.position;
-
-        yield return new WaitForSeconds(delay);
-
-        GameObject newObject = Instantiate(prefab, newPosition, Quaternion.identity);
     }
 
     public void LevelFinished()

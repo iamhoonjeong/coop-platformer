@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-
-    DifficultyType gameDifficulty;
+    [SerializeField] GameObject fruitDrop;
+    [SerializeField] DifficultyType gameDifficulty;
     GameManager gameManager;
     bool canBeControlled = false;
 
@@ -48,6 +48,7 @@ public class Player : MonoBehaviour
     [Header("Player Visuals")]
     [SerializeField] AnimatorOverrideController[] animators;
     [SerializeField] GameObject deathVFX;
+    [SerializeField] ParticleSystem dustFx;
     [SerializeField] int skinId;
 
     bool isGrounded;
@@ -87,6 +88,7 @@ public class Player : MonoBehaviour
             }
             else
             {
+                ObjectCreator.instance.CreateObject(fruitDrop, transform, true);
                 gameManager.RemoveFruit();
             }
             return;
@@ -132,7 +134,7 @@ public class Player : MonoBehaviour
     {
         SkinManager skinManager = SkinManager.instance;
 
-        if (!skinManager) return;
+        if (skinManager == null) return;
 
         anim.runtimeAnimatorController = animators[skinManager.choosenSkinId];
     }
@@ -247,6 +249,8 @@ public class Player : MonoBehaviour
 
     void HandleLanding()
     {
+        dustFx.Play();
+
         isAirborne = false;
         canDoubleJump = true;
 
@@ -316,12 +320,14 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
+        dustFx.Play();
         AudioManager.instance.PlaySFX(3);
         rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
     }
 
     void DoubleJump()
     {
+        dustFx.Play();
         AudioManager.instance.PlaySFX(3);
         isWallJumping = false;
         canDoubleJump = false;
@@ -330,6 +336,7 @@ public class Player : MonoBehaviour
 
     void WallJump()
     {
+        dustFx.Play();
         AudioManager.instance.PlaySFX(12);
         canDoubleJump = true;
         rb.linearVelocity = new Vector2(wallJumpForce.x * -facingDir, wallJumpForce.y);
