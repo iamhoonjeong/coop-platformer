@@ -1153,6 +1153,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e3c0f98fc185f4c9ab48ac03a2307cc2, type: 3}
+--- !u!1 &1309845579 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6226535187800675759, guid: 75c29701fb41047529398edd043ec7f4, type: 3}
+  m_PrefabInstance: {fileID: 7526485386575390477}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1326535599
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14861,7 +14866,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventSystem
-  m_FirstSelected: {fileID: 0}
+  m_FirstSelected: {fileID: 1309845579}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
 --- !u!4 &1986604883
