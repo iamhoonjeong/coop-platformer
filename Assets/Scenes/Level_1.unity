@@ -372,6 +372,115 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5807058293651539565, guid: 8b8495f511e9c4b3cb82df186779aa12, type: 3}
   m_PrefabInstance: {fileID: 959181030}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &358710534
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 87053437825222022, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 727.8668
+      objectReference: {fileID: 0}
+    - target: {fileID: 87053437825222022, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 741.9729
+      objectReference: {fileID: 0}
+    - target: {fileID: 87053437825222022, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 87053437825222022, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 87053437825222022, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 87053437825222022, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 87053437825222022, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 87053437825222022, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 87053437825222022, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 87053437825222022, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8739674477033837325, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+      propertyPath: m_Name
+      value: PlayerManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8739674477033837325, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 358710536}
+  m_SourcePrefab: {fileID: 100100000, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+--- !u!1 &358710535 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8739674477033837325, guid: fd7fc68e5b9534d13bf5d71918f0d3b0, type: 3}
+  m_PrefabInstance: {fileID: 358710534}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &358710536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 358710535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 621567455fd1c4ceb811cc8a00b6a1a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInputManager
+  m_NotificationBehavior: 0
+  m_MaxPlayerCount: -1
+  m_AllowJoining: 1
+  m_JoinBehavior: 0
+  m_PlayerJoinedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_PlayerLeftEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_JoinAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 779bf10a-9ee8-429b-bd4f-93fea2edefe2
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+  m_PlayerPrefab: {fileID: 0}
+  m_SplitScreen: 0
+  m_MaintainAspectRatioInSplitScreen: 0
+  m_FixedNumberOfSplitScreens: -1
+  m_SplitScreenRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
 --- !u!1001 &369717783
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15550,6 +15659,7 @@ SceneRoots:
   - {fileID: 539176004}
   - {fileID: 642183156}
   - {fileID: 1801456222}
+  - {fileID: 358710534}
   - {fileID: 321915780}
   - {fileID: 487313657}
   - {fileID: 2068692742}
