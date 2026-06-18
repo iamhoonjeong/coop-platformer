@@ -18,6 +18,12 @@ public class UIMainMenu : MonoBehaviour
     void Awake()
     {
         fadeEffect = GetComponentInChildren<UIFadeEffect>();
+
+        // 모바일 최적화 코드
+        Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0;
+        Screen.SetResolution(Screen.width, Screen.height, FullScreenMode.FullScreenWindow, new RefreshRate() { numerator = 60, denominator = 1 });
+        Time.timeScale = 1;
     }
 
     void Start()
